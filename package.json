@@ -1,0 +1,18 @@
+{
+  "name": "homer",
+  "version": "0.0.0",
+  "description": "Dynamic DNS server",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha"
+  },
+  "repository": "",
+  "author": "Eugene Ware <eugene@noblesamurai.com>",
+  "license": "BSD",
+  "dependencies": {
+    "chai": "~1.6.0",
+    "mocha": "~1.10.0",
+    "native-dns": "~0.4.1",
+    "optimist": "~0.5.0"
+  }
+}

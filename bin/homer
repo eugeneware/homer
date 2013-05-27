@@ -1,0 +1,82 @@
+#!/usr/bin/env node
+var server = require('../lib/server');
+var cmds = {
+  'register': {
+    demand: ['h', 'p'],
+    handler: function (argv) {
+      console.log(argv);
+    }
+  },
+  'update': {
+    demand: ['h', 'p']
+  },
+  'delete': {
+    demand: ['h', 'p']
+  },
+  'ip': {},
+  'lookup': {
+    demand: ['h', 'p']
+  },
+  'start': {
+    handler: function (argv) {
+      server(15353);
+    }
+  },
+  'restart': {},
+  'stop': {}
+};
+
+var optimist = require('optimist')
+  .usage(
+    'Usage: $0 <command>\n\n' +
+    '$0 <cmd> register -h [hostname] -p [password]\n' +
+    '$0 register -h [hostname] -p [password]\n' +
+    '$0 update -h [hostname] -p [password]\n' +
+    '$0 delete -h [hostname] -p [password]\n' +
+    '$0 ip\n' +
+    '$0 update -h [hostname] -i [ip] -p [password]\n' +
+    '$0 lookup -h [hostname] -p [password]\n' +
+    '$0 start\n' +
+    '$0 restart\n' +
+    '$0 stop'
+  )
+  .option('h', {
+    alias: 'hostname',
+    describe: 'The DNS hostname'
+  })
+  .option('p', {
+    alias: 'password',
+    describe: 'Your password'
+  })
+  .option('i', {
+    alias: 'ip',
+    describe: 'The IP address to set. By default it will take the IP address of the client'
+  })
+  .check(checkUsage);
+
+var argv = optimist.argv;
+
+function checkUsage(argv) {
+  if (!argv._.length || !(argv._[0] in cmds)) {
+    throw new Error('Must provide a valid <cmd>');
+    return false;
+  }
+
+  var cmd = cmds[argv._[0]];
+  if (cmd.demand && cmd.demand.length) {
+    var missing = [];
+
+    cmd.demand.forEach(function (key) {
+      if (!argv[key]) missing.push(key);
+    });
+
+    if (missing.length) {
+      throw new Error('Missing required arguments: ' + missing.join(', '));
+    }
+  }
+}
+
+if (argv._ && argv._.length) {
+  cmds[argv._[0]].handler && cmds[argv._[0]].handler(argv);
+}
+// vim: ft=javascript
