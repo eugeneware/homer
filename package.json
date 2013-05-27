@@ -1,13 +1,22 @@
 {
   "name": "homer",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Dynamic DNS server",
   "main": "index.js",
+  "bin": {
+    "homer": "./bin/homer"
+  },
   "scripts": {
     "test": "node_modules/.bin/mocha",
-    "start": "node lib/endpoint.js"
+    "start": "bin/homer start"
   },
-  "repository": "",
+  "repository": "https://github.com/nharbour/homer",
+  "keywords": [
+    "dns",
+    "ddns",
+    "dyndns",
+    "dynamic"
+  ],
   "author": "Eugene Ware <eugene@noblesamurai.com>",
   "license": "BSD",
   "dependencies": {
