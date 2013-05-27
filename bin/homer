@@ -1,27 +1,60 @@
 #!/usr/bin/env node
-var server = require('../lib/server')
-  , client = require('../lib/client');
+var endpoint = require('../lib/endpoint')
+  , HomerClient = require('../lib/client');
 
 var cmds = {
   'register': {
-    demand: ['h', 'p'],
+    demand: ['h', 'p', 'l'],
     handler: function (argv) {
-      console.log(argv);
+      var client = new HomerClient(argv.s, argv.l);
+      client.register(argv.h, argv.p, function (err) {
+        if (err) throw err;
+        console.log('Registration successful');
+      });
     }
   },
   'update': {
-    demand: ['h', 'p']
+    demand: ['h', 'p', 'l'],
+    handler: function (argv) {
+      var client = new HomerClient(argv.s, argv.l);
+      client.update(argv.h, argv.p, function (err) {
+        if (err) throw err;
+        console.log('IP Address Update successful');
+      });
+    }
   },
   'delete': {
     demand: ['h', 'p']
   },
-  'ip': {},
+  'ip': {
+    demand: ['s', 'l'],
+    handler: function (argv) {
+      var client = new HomerClient(argv.s, argv.l);
+      client.ip(function (err, res) {
+        if (err) throw err;
+        console.log('Your IP address is: ' + res.ip);
+      });
+    }
+  },
   'lookup': {
-    demand: ['h', 'p']
+    demand: ['h', 'p', 'l'],
+    handler: function (argv) {
+      var client = new HomerClient(argv.s, argv.l);
+      client.lookup(argv.h, argv.p, function (err, res) {
+        if (err) throw err;
+        console.log('Your registered IP address is: ' + res.ip);
+      });
+    }
   },
   'start': {
+    demand: ['l', 'd'],
     handler: function (argv) {
-      server(15353);
+      server = endpoint.create();
+      server.app.listen(argv.l, 'localhost', function (err) {
+        server.dnsServer.serve(argv.d);
+        console.log('Server listening on HTTP port ' + argv.l +
+          ' and DNS port ' + argv.d);
+      });
     }
   },
   'restart': {},
@@ -49,6 +82,21 @@ var optimist = require('optimist')
   .option('p', {
     alias: 'password',
     describe: 'Your password'
+  })
+  .option('l', {
+    alias: 'listen',
+    describe: 'HTTP port to listen to',
+    default: 3000
+  })
+  .option('d', {
+    alias: 'listen',
+    describe: 'DNS port to listen to',
+    default: 137373
+  })
+  .option('s', {
+    alias: 'server',
+    describe: 'HTTP server host to query against',
+    default: '127.0.0.1'
   })
   .option('i', {
     alias: 'ip',

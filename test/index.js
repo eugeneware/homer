@@ -73,6 +73,14 @@ describe('homer http service', function () {
       });
     });
   });
+
+  it('should be able to look up your own ip address', function (done) {
+    client.ip(function (err, res) {
+      if (err) return done(err);
+      expect(res.ip).to.equal('127.0.0.1');
+      done();
+    });
+  });
 });
 
 describe('homer dns server', function () {
