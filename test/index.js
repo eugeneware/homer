@@ -76,37 +76,25 @@ describe('homer http service', function () {
 });
 
 describe('homer dns server', function () {
-  var port = 15353;
+  var port = 3000;
+  var dnsPort = 15353;
   var dnsServer;
 
   beforeEach(function (done) {
-    var _db = {
-      'www.google.com': {
-        ip: '74.125.237.147'
-      },
-      'home.eugeneware.com': {
-        ip: '124.170.15.38'
-      }
-    };
-
-    var db = {
-      get: function (key, cb) {
-        if (key in _db) {
-          cb(null, _db[key]);
-        } else {
-          cb(new Error('Key Not Found'));
-        }
-      }
-    };
-
-    dnsServer = server.create(db);
-    dnsServer.serve(port);
-    done();
+    rimraf.sync(dbPath);
+    server = endpoint.create();
+    server.app.listen(port, 'localhost', function (err) {
+      server.dnsServer.serve(dnsPort);
+      client = new HomerClient('localhost', port);
+      done();
+    });
   });
 
   afterEach(function (done) {
-    dnsServer.close();
-    done();
+    server.app.close(function () {
+      server.dnsServer.close();
+      done();
+    });
   });
 
   function dnsRequest(name, type, server, port, cb) {
@@ -145,16 +133,23 @@ describe('homer dns server', function () {
   });
 
   it('should be able to query my dns server', function (done) {
-    var host = 'home.eugeneware.com';
-    dnsRequest(host, 'a', '127.0.0.1', port,
-      function (err, addresses) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      client.update(hostname, password, function (err) {
         if (err) return done(err);
-        expect(addresses.answer.length).to.equal(1);
-        addresses.answer.forEach(function (answer) {
-          expect(answer.name).to.equal(host);
-          expect(answer.ttl).to.equal(60);
-        });
-        done();
+        dnsRequest(hostname, 'a', '127.0.0.1', dnsPort,
+          function (err, addresses) {
+            if (err) return done(err);
+            expect(addresses.answer.length).to.equal(1);
+            addresses.answer.forEach(function (answer) {
+              expect(answer.name).to.equal(hostname);
+              expect(answer.ttl).to.equal(60);
+            });
+            done();
+          });
       });
+    });
   });
 });
