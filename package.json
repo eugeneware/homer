@@ -1,6 +1,6 @@
 {
   "name": "homer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Dynamic DNS server",
   "main": "index.js",
   "bin": {
