@@ -63,24 +63,19 @@ var cmds = {
           ' and DNS port ' + argv.d);
       });
     }
-  },
-  'restart': {},
-  'stop': {}
+  }
 };
 
 var optimist = require('optimist')
   .usage(
     'Usage: $0 <command>\n\n' +
-    '$0 <cmd> register -h [hostname] -p [password]\n' +
     '$0 register -h [hostname] -p [password]\n' +
     '$0 update -h [hostname] -p [password]\n' +
     '$0 delete -h [hostname] -p [password]\n' +
     '$0 ip\n' +
     '$0 update -h [hostname] -i [ip] -p [password]\n' +
     '$0 lookup -h [hostname] -p [password]\n' +
-    '$0 start\n' +
-    '$0 restart\n' +
-    '$0 stop'
+    '$0 start'
   )
   .option('h', {
     alias: 'hostname',
