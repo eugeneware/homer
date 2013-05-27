@@ -46,6 +46,22 @@ describe('homer http service', function () {
     });
   });
 
+  it('should be able to update with a set ip', function (done) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      client.update(hostname, password, '8.8.8.8', function (err) {
+        if (err) return done(err);
+        client.lookup(hostname, password, function (err, res) {
+          if (err) return done(err);
+          expect(res.ip).to.equal('8.8.8.8');
+          done();
+        });
+      });
+    });
+  });
+
   it('should be able to deal with bad passwords', function (done) {
     var hostname = 'home.eugeneware.com';
     var password = 'hslim2';

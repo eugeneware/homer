@@ -17,7 +17,7 @@ var cmds = {
     demand: ['h', 'p', 'l'],
     handler: function (argv) {
       var client = new HomerClient(argv.s, argv.l);
-      client.update(argv.h, argv.p, function (err) {
+      client.update(argv.h, argv.p, argv.i, function (err) {
         if (err) throw err;
         console.log('IP Address Update successful');
       });
