@@ -91,7 +91,7 @@ var optimist = require('optimist')
     default: 3000
   })
   .option('d', {
-    alias: 'listen',
+    alias: 'dnsport',
     describe: 'DNS port to listen to',
     default: 15353
   })
@@ -118,7 +118,6 @@ function checkUsage(argv) {
   if (cmd.demand && cmd.demand.length) {
     var missing = [];
 
-console.log(argv);
     cmd.demand.forEach(function (key) {
       if (!argv[key]) missing.push(key);
     });
