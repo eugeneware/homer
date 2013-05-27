@@ -9,7 +9,7 @@ var expect = require('chai').expect
 
 var dbPath = path.join(__dirname, '..', 'data/homer.db');
 
-describe.only('homer http service', function () {
+describe('homer http service', function () {
   var port = 3000;
   var dnsPort = 15353;
   var client, server;
@@ -31,13 +31,38 @@ describe.only('homer http service', function () {
     });
   });
 
-  it('should be able to connect to the endpoint server', function (done) {
+  it('should be able to register', function (done) {
     var hostname = 'home.eugeneware.com';
     var password = 'hslim2';
     client.register(hostname, password, function (err, res) {
       if (err) return done(err);
       expect(res.status).to.equal('OK');
       done();
+    });
+  });
+
+  it('should be able to update', function (done) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      client.update(hostname, password, function (err, res) {
+        if (err) return done(err);
+        expect(res.status).to.equal('OK');
+        done();
+      });
+    });
+  });
+
+  it('should be able to deal with bad passwords', function (done) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      client.update(hostname, 'bad password', function (err, res) {
+        expect(err.message).to.equal('Incorrect password');
+        done();
+      });
     });
   });
 });
