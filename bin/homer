@@ -93,7 +93,7 @@ var optimist = require('optimist')
   .option('d', {
     alias: 'listen',
     describe: 'DNS port to listen to',
-    default: 137373
+    default: 15353
   })
   .option('s', {
     alias: 'server',
