@@ -1,5 +1,7 @@
 #!/usr/bin/env node
-var server = require('../lib/server');
+var server = require('../lib/server')
+  , client = require('../lib/client');
+
 var cmds = {
   'register': {
     demand: ['h', 'p'],

@@ -1,13 +1,72 @@
 var expect = require('chai').expect
   , dns = require('native-dns')
-  , server = require('../lib/server');
+  , server = require('../lib/server')
+  , HomerClient = require('../lib/client')
+  , endpoint = require('../lib/endpoint')
+  , request = require('request')
+  , path = require('path')
+  , rimraf = require('rimraf');
 
-describe('homer', function () {
+var dbPath = path.join(__dirname, '..', 'data/homer.db');
+
+describe.only('homer http service', function () {
+  var port = 3000;
+  var dnsPort = 15353;
+  var client, server;
+
+  beforeEach(function (done) {
+    rimraf.sync(dbPath);
+    server = endpoint.create();
+    server.app.listen(port, 'localhost', function (err) {
+      server.dnsServer.serve(dnsPort);
+      client = new HomerClient('localhost', port);
+      done();
+    });
+  });
+
+  afterEach(function (done) {
+    server.app.close(function () {
+      server.dnsServer.close();
+      done();
+    });
+  });
+
+  it('should be able to connect to the endpoint server', function (done) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      expect(res.status).to.equal('OK');
+      done();
+    });
+  });
+});
+
+describe('homer dns server', function () {
   var port = 15353;
   var dnsServer;
 
   beforeEach(function (done) {
-    dnsServer = server.create();
+    var _db = {
+      'www.google.com': {
+        ip: '74.125.237.147'
+      },
+      'home.eugeneware.com': {
+        ip: '124.170.15.38'
+      }
+    };
+
+    var db = {
+      get: function (key, cb) {
+        if (key in _db) {
+          cb(null, _db[key]);
+        } else {
+          cb(new Error('Key Not Found'));
+        }
+      }
+    };
+
+    dnsServer = server.create(db);
     dnsServer.serve(port);
     done();
   });
@@ -53,12 +112,14 @@ describe('homer', function () {
   });
 
   it('should be able to query my dns server', function (done) {
-    dnsRequest('www.google.com', 'a', '127.0.0.1', port,
+    var host = 'home.eugeneware.com';
+    dnsRequest(host, 'a', '127.0.0.1', port,
       function (err, addresses) {
         if (err) return done(err);
-        expect(addresses.answer.length).to.equal(2);
+        expect(addresses.answer.length).to.equal(1);
         addresses.answer.forEach(function (answer) {
-          expect(answer.name).to.equal('www.google.com');
+          expect(answer.name).to.equal(host);
+          expect(answer.ttl).to.equal(60);
         });
         done();
       });
