@@ -34,11 +34,7 @@ describe('homer http service', function () {
   it('should be able to register', function (done) {
     var hostname = 'home.eugeneware.com';
     var password = 'hslim2';
-    client.register(hostname, password, function (err, res) {
-      if (err) return done(err);
-      expect(res.status).to.equal('OK');
-      done();
-    });
+    client.register(hostname, password, done);
   });
 
   it('should be able to update', function (done) {
@@ -46,11 +42,7 @@ describe('homer http service', function () {
     var password = 'hslim2';
     client.register(hostname, password, function (err, res) {
       if (err) return done(err);
-      client.update(hostname, password, function (err, res) {
-        if (err) return done(err);
-        expect(res.status).to.equal('OK');
-        done();
-      });
+      client.update(hostname, password, done);
     });
   });
 
@@ -62,6 +54,22 @@ describe('homer http service', function () {
       client.update(hostname, 'bad password', function (err, res) {
         expect(err.message).to.equal('Incorrect password');
         done();
+      });
+    });
+  });
+
+  it('should be able to lookup an ip address', function (done) {
+    var hostname = 'home.eugeneware.com';
+    var password = 'hslim2';
+    client.register(hostname, password, function (err, res) {
+      if (err) return done(err);
+      client.update(hostname, password, function (err, res) {
+        if (err) return done(err);
+        client.lookup(hostname, password, function (err, res) {
+          if (err) return done(err);
+          expect(res.ip).to.equal('127.0.0.1');
+          done();
+        });
       });
     });
   });
