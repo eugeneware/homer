@@ -24,7 +24,14 @@ var cmds = {
     }
   },
   'delete': {
-    demand: ['h', 'p']
+    demand: ['h', 'p', 'l'],
+    handler: function (argv) {
+      var client = new HomerClient(argv.s, argv.l);
+      client.delete(argv.h, argv.p, function (err) {
+        if (err) throw err;
+        console.log('IP Address Deletion successful');
+      });
+    }
   },
   'ip': {
     demand: ['s', 'l'],
