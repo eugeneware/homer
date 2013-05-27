@@ -54,12 +54,12 @@ var cmds = {
     }
   },
   'start': {
-    demand: ['l', 'd'],
+    demand: ['l', 'd', 's'],
     handler: function (argv) {
       server = endpoint.create();
-      server.app.listen(argv.l, 'localhost', function (err) {
-        server.dnsServer.serve(argv.d);
-        console.log('Server listening on HTTP port ' + argv.l +
+      server.app.listen(argv.l, argv.s, function (err) {
+        server.dnsServer.serve(argv.d, argv.s);
+        console.log('Server listening on HTTP host ' + argv.s + ':' + argv.l +
           ' and DNS port ' + argv.d);
       });
     }
