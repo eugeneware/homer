@@ -118,6 +118,7 @@ function checkUsage(argv) {
   if (cmd.demand && cmd.demand.length) {
     var missing = [];
 
+console.log(argv);
     cmd.demand.forEach(function (key) {
       if (!argv[key]) missing.push(key);
     });
