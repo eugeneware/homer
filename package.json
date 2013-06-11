@@ -1,6 +1,6 @@
 {
   "name": "homer",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Dynamic DNS server",
   "main": "index.js",
   "bin": {
@@ -10,7 +10,7 @@
     "test": "node_modules/.bin/mocha",
     "start": "bin/homer start"
   },
-  "repository": "https://github.com/nharbour/homer",
+  "repository": "https://github.com/eugeneware/homer",
   "keywords": [
     "dns",
     "ddns",
